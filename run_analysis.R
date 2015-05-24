@@ -1,8 +1,12 @@
+#################################################
+## @course: Getting and Cleaning Data          ##     
+## @author: Ankur Chauhan <ankur@malloc64.com> ##
+#################################################
+
 # install and load libraries
-require("data.table")
-require("reshape2")
-require("dplyr")
-require("magrittr")
+if(!require("data.table")) { install.packages("data.table") }; require("data.table")
+if(!require("reshape2")) { install.packages("reshape2") }; require("reshape2")
+if(!require("dplyr")) { install.packages("dplyr") }; require("dplyr")
 
 fileURL <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 destFile <- paste(getwd(), "/dataset.zip", sep = "")
@@ -61,12 +65,11 @@ data <- data[grep("mean|std|activity|subject", colnames(data))]
 data <- merge(data, activity_labels, by="activity", all.x = TRUE)
 
 # formatting columns with descriptive names
-colnames <- colnames(data)
-colnames <- gsub('-mean', 'Mean', colnames)
-colnames <- gsub('-std', 'Std', colnames)
-colnames <- gsub('[()-]', '', colnames)
-colnames <- gsub('BodyBody', 'Body', colnames)
-colnames(data) <- colnames
+colnames(data) <- gsub('BodyBody', 'Body', 
+                  gsub('[()-]', '', 
+                  gsub('-std', 'StdDev', 
+                  gsub('-mean', 'Mean', 
+                  colnames(data)))))
 
 # remove "activity" column since we do not 
 finalData <- data[, colnames(data) != "activity"]
@@ -76,4 +79,6 @@ ids = c("subject", "activityName")
 measures = setdiff(colnames(finalData),ids)
 molten_data <- melt(data, id = ids, measure.vars = measures)
 tidy_data <- dcast(molten_data, subject + activityName ~ variable, mean)
+
+# write to file: tidy_data.txt
 write.table(tidy_data, file = "./tidy_data.txt")
