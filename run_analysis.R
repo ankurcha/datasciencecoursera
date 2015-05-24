@@ -1,8 +1,3 @@
-#################################################
-## @course: Getting and Cleaning Data          ##     
-## @author: Ankur Chauhan <ankur@malloc64.com> ##
-#################################################
-
 # install and load libraries
 if(!require("data.table")) { install.packages("data.table") }; require("data.table")
 if(!require("reshape2")) { install.packages("reshape2") }; require("reshape2")
@@ -80,5 +75,5 @@ measures = setdiff(colnames(finalData),ids)
 molten_data <- melt(data, id = ids, measure.vars = measures)
 tidy_data <- dcast(molten_data, subject + activityName ~ variable, mean)
 
-# write to file: tidy_data.txt
-write.table(tidy_data, file = "./tidy_data.txt")
+# write data to file
+write.table(tidy_data, file = "./tidy_data.txt", row.name=FALSE)
